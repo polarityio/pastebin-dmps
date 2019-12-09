@@ -20,6 +20,7 @@ dependency-reduced-pom.xml
 *.xlsx
 
 # Ignore local log files
+logs/
 *.log
 
 # Ignore Generated HTML README Files
