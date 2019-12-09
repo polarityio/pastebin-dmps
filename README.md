@@ -4,7 +4,7 @@ The Polarity Psbdmp integration allows Polarity to search Pastebin dumps for dom
 
 ![psbdmp](https://user-images.githubusercontent.com/22529325/54718792-beea0800-4b31-11e9-8d90-c432d3f098e5.gif)
 
-To learn more about World Trading Data, please visit the [official website](https://psbdmp.ws).
+To learn more about Psbdmp, please visit the [official website](https://psbdmp.ws).
 
 ## Psbdmp Integration Options
 
