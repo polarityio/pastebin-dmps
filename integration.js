@@ -21,7 +21,7 @@ function _setupRegexBlacklists(options) {
     } else {
         if (options.domainBlacklistRegex !== previousDomainRegexAsString) {
             previousDomainRegexAsString = options.domainBlacklistRegex;
-            Logger.debug({domainBlacklistRegex: previousDomainRegexAsString}, "Modifying Domain Blacklist Regex");
+            Logger.debug({ domainBlacklistRegex: previousDomainRegexAsString }, "Modifying Domain Blacklist Regex");
             domainBlacklistRegex = new RegExp(options.domainBlacklistRegex, 'i');
         }
     }
@@ -33,7 +33,7 @@ function _setupRegexBlacklists(options) {
     } else {
         if (options.emailBlacklistRegex !== previousEmailRegexAsString) {
             previousEmailRegexAsString = options.emailBlacklistRegex;
-            Logger.debug({emailBlacklistRegex: previousEmailRegexAsString}, "Modifying Email Blacklist Regex");
+            Logger.debug({ emailBlacklistRegex: previousEmailRegexAsString }, "Modifying Email Blacklist Regex");
             emailBlacklistRegex = new RegExp(options.emailBlacklistRegex, 'i');
         }
     }
@@ -45,7 +45,7 @@ function doLookup(entities, options, cb) {
 
     _setupRegexBlacklists(options);
 
-    Logger.trace({blacklist: blacklist}, "checking to see what blacklist looks like");
+    Logger.trace({ blacklist: blacklist }, "checking to see what blacklist looks like");
 
     async.each(entities, function (entityObj, next) {
         if (_.includes(blacklist, entityObj.value)) {
@@ -53,7 +53,7 @@ function doLookup(entities, options, cb) {
         } else if (entityObj.isEmail) {
             if (emailBlacklistRegex !== null) {
                 if (emailBlacklistRegex.test(entityObj.value)) {
-                    Logger.debug({email: entityObj.value}, 'Blocked BlackListed Email Lookup');
+                    Logger.debug({ email: entityObj.value }, 'Blocked BlackListed Email Lookup');
                     return next(null);
                 }
             }
@@ -62,14 +62,14 @@ function doLookup(entities, options, cb) {
                     next(err);
                 } else {
                     lookupResults.push(result);
-                    Logger.debug({result: result}, "Checking the result values ");
+                    Logger.debug({ result: result }, "Checking the result values ");
                     next(null);
                 }
             });
         } else if (entityObj.isDomain) {
             if (domainBlacklistRegex !== null) {
                 if (domainBlacklistRegex.test(entityObj.value)) {
-                    Logger.debug({domain: entityObj.value}, 'Blocked BlackListed Domain Lookup');
+                    Logger.debug({ domain: entityObj.value }, 'Blocked BlackListed Domain Lookup');
                     return next(null);
                 }
             }
@@ -78,7 +78,7 @@ function doLookup(entities, options, cb) {
                     next(err);
                 } else {
                     lookupResults.push(result);
-                    Logger.debug({result: result}, "Checking the result values ");
+                    Logger.debug({ result: result }, "Checking the result values ");
                     next(null);
                 }
             });
@@ -113,16 +113,16 @@ function _lookupEntity(entityObj, options, cb) {
             });
             return;
         }
-        Logger.debug({body: body}, "Printing out the results of Body ");
+        Logger.debug({ body: body }, "Printing out the results of Body ");
 
-        Logger.debug({body: body}, "Checking Null issues for body");
+        Logger.debug({ body: body }, "Checking Null issues for body");
 
-        if (_.isNull(body) || _.isEmpty(body.data || body.count === 0)){
-          cb(null, {
-            entity: entityObj,
-            data: null // setting data to null indicates to the server that this entity lookup was a "miss"
-          });
-          return;
+        if (_.isNull(body) || _.isEmpty(body.data || body.count === 0)) {
+            cb(null, {
+                entity: entityObj,
+                data: null // setting data to null indicates to the server that this entity lookup was a "miss"
+            });
+            return;
         }
 
         // The lookup results returned is an array of lookup objects with the following format
@@ -162,16 +162,16 @@ function _lookupEntityDomain(entityObj, options, cb) {
             });
             return;
         }
-        Logger.debug({body: body}, "Printing out the results of Body ");
+        Logger.debug({ body: body }, "Printing out the results of Body ");
 
-        Logger.debug({body: body}, "Checking Null issues for body");
+        Logger.debug({ body: body }, "Checking Null issues for body");
 
-        if (_.isNull(body) || _.isEmpty(body.data || body.count === 0)){
-          cb(null, {
-            entity: entityObj,
-            data: null // setting data to null indicates to the server that this entity lookup was a "miss"
-          });
-          return;
+        if (_.isNull(body) || _.isEmpty(body.data || body.count === 0)) {
+            cb(null, {
+                entity: entityObj,
+                data: null // setting data to null indicates to the server that this entity lookup was a "miss"
+            });
+            return;
         }
 
         // The lookup results returned is an array of lookup objects with the following format
@@ -193,6 +193,35 @@ function _isLookupMiss(response) {
     return response.statusCode === 404 || response.statusCode === 500 || response.statusCode === 400;
 }
 
+function _createJsonErrorPayload(msg, pointer, httpCode, code, title, meta) {
+    let errors = [_createJsonErrorObject(msg, pointer, httpCode, code, title, meta)];
+
+    log.error({ errors: errors });
+
+    return { errors: errors };
+}
+
+function _createJsonErrorObject(msg, pointer, httpCode, code, title, meta) {
+    let error = {
+        detail: msg,
+        status: httpCode.toString(),
+        title: title,
+        code: 'RL_' + code.toString()
+    };
+
+    if (pointer) {
+        error.source = {
+            pointer: pointer
+        };
+    }
+
+    if (meta) {
+        error.meta = meta;
+    }
+
+    return error;
+}
+
 function _isApiError(err, response, body, entityValue) {
     if (err) {
         return {
@@ -212,7 +241,7 @@ function _isApiError(err, response, body, entityValue) {
     if (response.statusCode !== 200 && response.statusCode !== 404 && response.statusCode !== 400) {
         return _createJsonErrorPayload("Unexpected HTTP Status Code", null, response.statusCode, '1', 'Unexpected HTTP Status Code', {
             err: err,
-            body:body,
+            body: body,
             entityValue: entityValue
         });
     }
@@ -223,11 +252,11 @@ function _isApiError(err, response, body, entityValue) {
 function validateOptions(userOptions, cb) {
     let errors = [];
 
-    if(typeof userOptions.domainBlacklistRegex.value === 'string' && userOptions.domainBlacklistRegex.value.length > 0){
-        try{
+    if (typeof userOptions.domainBlacklistRegex.value === 'string' && userOptions.domainBlacklistRegex.value.length > 0) {
+        try {
             new RegExp(userOptions.domainBlacklistRegex.value);
         }
-        catch(error){
+        catch (error) {
             errors.push({
                 key: 'domainBlacklistRegex',
                 message: error.toString()
@@ -235,11 +264,11 @@ function validateOptions(userOptions, cb) {
         }
     }
 
-    if(typeof userOptions.emailBlacklistRegex.value === 'string' && userOptions.emailBlacklistRegex.value.length > 0){
-        try{
+    if (typeof userOptions.emailBlacklistRegex.value === 'string' && userOptions.emailBlacklistRegex.value.length > 0) {
+        try {
             new RegExp(userOptions.emailBlacklistRegex.value);
         }
-        catch(e){
+        catch (e) {
             errors.push({
                 key: 'emailBlacklistRegex',
                 message: error.toString()
