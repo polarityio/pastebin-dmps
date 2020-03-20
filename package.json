@@ -2,10 +2,10 @@
   "main": "./integration.js",
   "name": "psbdmp",
   "description": "psbdmp Search",
-  "version": "3.0.3-beta",
+  "version": "3.0.4-beta",
   "private": true,
   "dependencies": {
     "request": "^2.8.8",
-    "async": "^2.6"
+    "async": "^3.2.0"
   }
 }
