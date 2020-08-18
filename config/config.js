@@ -19,7 +19,7 @@ module.exports = {
   entityTypes: ['domain', 'email'],
 
   logging: {
-    level: 'info'
+    level: 'trace'
   },
   //trace, debug, info, warn, error, fatal
   /**
@@ -68,6 +68,7 @@ module.exports = {
      */
     rejectUnauthorized: true
   },
+  onDemandOnly: true,
   /**
    * Options that are displayed to the user/admin in the Polarity integration user-interface.  Should be structured
    * as an array of option objects.
@@ -87,27 +88,27 @@ module.exports = {
       adminOnly: false
     },
     {
-        "key"         : "blacklist",
-        "name"        : "Blacklist Domains",
-        "description" : "List of domains that you never want to lookup",
+        "key"         : "blocklist",
+        "name"        : "Domain Ignore List",
+        "description" : "List of domains that you never want to lookup in Pastebin Dmps",
         "default"     : "",
         "type"        : "text",
         "userCanEdit" : false,
         "adminOnly"    : false
     },
     {
-        key: "domainBlacklistRegex",
-        name: "Domain Black List Regex",
-        description: "Domains that match the given regex will not be looked up (if blank, no domains will be black listed)",
+        key: "domainBlocklistRegex",
+        name: "Ignore Domain Regex",
+        description: "Domains that match the given regex will not be looked up (if blank, no domains will be ignored",
         default: "",
         type: "text",
         userCanEdit: false,
         adminOnly: false
     },
     {
-        key: "emailBlacklistRegex",
-        name: "EMAIL Black List Regex",
-        description: "Emails that match the given regex will not be looked up (if blank, no Emails will be black listed)",
+        key: "emailBlocklistRegex",
+        name: "Ignore EmailRegex",
+        description: "Emails that match the given regex will not be looked up (if blank, no Emails will be ignored)",
         default: "",
         type: "text",
         userCanEdit: false,

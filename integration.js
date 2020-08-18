@@ -10,50 +10,50 @@ let Logger;
 let requestWithDefaults;
 let previousDomainRegexAsString = '';
 let previousEmailRegexAsString = '';
-let domainBlacklistRegex = null;
-let emailBlacklistRegex = null;
+let domainBlocklistRegex = null;
+let emailBlocklistRegex = null;
 
-function _setupRegexBlacklists(options) {
-    if (options.domainBlacklistRegex !== previousDomainRegexAsString && options.domainBlacklistRegex.length === 0) {
-        Logger.debug("Removing Domain Blacklist Regex Filtering");
+function _setupRegexBlocklists(options) {
+    if (options.domainBlocklistRegex !== previousDomainRegexAsString && options.domainBlocklistRegex.length === 0) {
+        Logger.debug("Removing Domain Blocklist Regex Filtering");
         previousDomainRegexAsString = '';
-        domainBlacklistRegex = null;
+        domainBlocklistRegex = null;
     } else {
-        if (options.domainBlacklistRegex !== previousDomainRegexAsString) {
-            previousDomainRegexAsString = options.domainBlacklistRegex;
-            Logger.debug({ domainBlacklistRegex: previousDomainRegexAsString }, "Modifying Domain Blacklist Regex");
-            domainBlacklistRegex = new RegExp(options.domainBlacklistRegex, 'i');
+        if (options.domainBlocklistRegex !== previousDomainRegexAsString) {
+            previousDomainRegexAsString = options.domainBlocklistRegex;
+            Logger.debug({ domainBlocklistRegex: previousDomainRegexAsString }, "Modifying Domain Blocklist Regex");
+            domainBlocklistRegex = new RegExp(options.domainBlocklistRegex, 'i');
         }
     }
 
-    if (options.emailBlacklistRegex !== previousEmailRegexAsString && options.emailBlacklistRegex.length === 0) {
-        Logger.debug("Removing Email Blacklist Regex Filtering");
+    if (options.emailBlocklistRegex !== previousEmailRegexAsString && options.emailBlocklistRegex.length === 0) {
+        Logger.debug("Removing Email Blocklist Regex Filtering");
         previousEmailRegexAsString = '';
-        emailBlacklistRegex = null;
+        emailBlocklistRegex = null;
     } else {
-        if (options.emailBlacklistRegex !== previousEmailRegexAsString) {
-            previousEmailRegexAsString = options.emailBlacklistRegex;
-            Logger.debug({ emailBlacklistRegex: previousEmailRegexAsString }, "Modifying Email Blacklist Regex");
-            emailBlacklistRegex = new RegExp(options.emailBlacklistRegex, 'i');
+        if (options.emailBlocklistRegex !== previousEmailRegexAsString) {
+            previousEmailRegexAsString = options.emailBlocklistRegex;
+            Logger.debug({ emailBlocklistRegex: previousEmailRegexAsString }, "Modifying Email Blocklist Regex");
+            emailBlocklistRegex = new RegExp(options.emailBlocklistRegex, 'i');
         }
     }
 }
 
 function doLookup(entities, options, cb) {
-    let blacklist = options.blacklist;
+    let blocklist = options.blocklist;
     let lookupResults = [];
 
-    _setupRegexBlacklists(options);
+    _setupRegexBlocklists(options);
 
-    Logger.trace({ blacklist: blacklist }, "checking to see what blacklist looks like");
+    Logger.trace({ blocklist: blocklist }, "checking to see what blocklist looks like");
 
     async.each(entities, function (entityObj, next) {
-        if (_.includes(blacklist, entityObj.value)) {
+        if (_.includes(blocklist, entityObj.value)) {
             next(null);
         } else if (entityObj.isEmail) {
-            if (emailBlacklistRegex !== null) {
-                if (emailBlacklistRegex.test(entityObj.value)) {
-                    Logger.debug({ email: entityObj.value }, 'Blocked BlackListed Email Lookup');
+            if (emailBlocklistRegex !== null) {
+                if (emailBlocklistRegex.test(entityObj.value)) {
+                    Logger.debug({ email: entityObj.value }, 'Blocked BlockListed Email Lookup');
                     return next(null);
                 }
             }
@@ -67,9 +67,9 @@ function doLookup(entities, options, cb) {
                 }
             });
         } else if (entityObj.isDomain) {
-            if (domainBlacklistRegex !== null) {
-                if (domainBlacklistRegex.test(entityObj.value)) {
-                    Logger.debug({ domain: entityObj.value }, 'Blocked BlackListed Domain Lookup');
+            if (domainBlocklistRegex !== null) {
+                if (domainBlocklistRegex.test(entityObj.value)) {
+                    Logger.debug({ domain: entityObj.value }, 'Blocked BlockListed Domain Lookup');
                     return next(null);
                 }
             }
@@ -94,7 +94,7 @@ function doLookup(entities, options, cb) {
 function _lookupEntity(entityObj, options, cb) {
 
     let requestOptions = {
-        uri: options.baseUrl + '/api/search/' + entityObj.value,
+        uri: options.baseUrl + '/api/search/eamil/' + entityObj.value,
         method: 'GET',
         json: true
     };
@@ -124,6 +124,7 @@ function _lookupEntity(entityObj, options, cb) {
             });
             return;
         }
+        
 
         // The lookup results returned is an array of lookup objects with the following format
         cb(null, {
@@ -143,7 +144,7 @@ function _lookupEntity(entityObj, options, cb) {
 function _lookupEntityDomain(entityObj, options, cb) {
 
     let requestOptions = {
-        uri: options.baseUrl + '/api/search/' + entityObj.value,
+        uri: options.baseUrl + '/api/search/domain/' + entityObj.value,
         method: 'GET',
         json: true
     };
@@ -252,25 +253,25 @@ function _isApiError(err, response, body, entityValue) {
 function validateOptions(userOptions, cb) {
     let errors = [];
 
-    if (typeof userOptions.domainBlacklistRegex.value === 'string' && userOptions.domainBlacklistRegex.value.length > 0) {
+    if (typeof userOptions.domainBlocklistRegex.value === 'string' && userOptions.domainBlocklistRegex.value.length > 0) {
         try {
-            new RegExp(userOptions.domainBlacklistRegex.value);
+            new RegExp(userOptions.domainBlocklistRegex.value);
         }
         catch (error) {
             errors.push({
-                key: 'domainBlacklistRegex',
+                key: 'domainBlocklistRegex',
                 message: error.toString()
             });
         }
     }
 
-    if (typeof userOptions.emailBlacklistRegex.value === 'string' && userOptions.emailBlacklistRegex.value.length > 0) {
+    if (typeof userOptions.emailBlocklistRegex.value === 'string' && userOptions.emailBlocklistRegex.value.length > 0) {
         try {
-            new RegExp(userOptions.emailBlacklistRegex.value);
+            new RegExp(userOptions.emailBlocklistRegex.value);
         }
         catch (e) {
             errors.push({
-                key: 'emailBlacklistRegex',
+                key: 'emailBlocklistRegex',
                 message: error.toString()
             });
         }

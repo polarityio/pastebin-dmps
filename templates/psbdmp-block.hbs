@@ -1,10 +1,15 @@
 {{#each details as |result index|}}
     <div>
       <span class="p-key">Pastebin ID:</span>
-      <span class="p-value"><a href="https://psbdmp.ws/api/dump/get/{{result.id}}" target="_blank">{{result.id}}</a></span>
+      <span class="p-value"><a href="https://pastebin.com/{{result.id}}" target="_blank">{{result.id}}</a></span>
     </div>
     <div>
       <span class="p-key">Creation Time:</span>
       <span class="p-value">{{result.time}}</span>
     </div>
+    <div>
+      <span class="p-key">Tag:</span>
+      <span class="p-value">{{result.tags}}</span>
+    </div>
+    <hr>
 {{/each}}
