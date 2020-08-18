@@ -5,7 +5,8 @@
   "version": "3.0.4-beta",
   "private": true,
   "dependencies": {
-    "request": "^2.8.8",
-    "async": "^3.2.0"
+    "async": "^3.2.0",
+    "moment": "^2.27.0",
+    "request": "^2.8.8"
   }
 }

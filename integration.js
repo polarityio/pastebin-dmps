@@ -2,7 +2,9 @@
 
 let request = require('request');
 let _ = require('lodash');
+let fp = require('lodash/fp');
 let async = require('async');
+let moment = require('moment');
 let config = require('./config/config');
 let fs = require('fs');
 
@@ -12,6 +14,7 @@ let previousDomainRegexAsString = '';
 let previousEmailRegexAsString = '';
 let domainBlocklistRegex = null;
 let emailBlocklistRegex = null;
+let DAYS_TO_LOOK_BACK = 60;
 
 function _setupRegexBlocklists(options) {
     if (options.domainBlocklistRegex !== previousDomainRegexAsString && options.domainBlocklistRegex.length === 0) {
@@ -86,6 +89,8 @@ function doLookup(entities, options, cb) {
             next(null);
         }
     }, function (err) {
+        Logger.trace(err, "ERROR")
+        Logger.trace({ lookupResults: lookupResults }, "lookupresulsts");
         cb(err, lookupResults);
     });
 }
@@ -116,14 +121,15 @@ function _lookupEntity(entityObj, options, cb) {
         Logger.debug({ body: body }, "Printing out the results of Body ");
 
         Logger.debug({ body: body }, "Checking Null issues for body");
+        
+        // TODO write and implement function here to filter out data from body.data that isn't within date
+        const pastebins = getPastebins(options, body);
 
-        if (_.isNull(body) || _.isEmpty(body.data || body.count === 0)) {
-            cb(null, {
+        if (!pastebins.length)
+            return cb(null, {
                 entity: entityObj,
                 data: null // setting data to null indicates to the server that this entity lookup was a "miss"
             });
-            return;
-        }
         
 
         // The lookup results returned is an array of lookup objects with the following format
@@ -133,9 +139,9 @@ function _lookupEntity(entityObj, options, cb) {
             // Required: An object containing everything you want passed to the template
             data: {
                 // Required: These are the tags that are displayed in your template
-                summary: ["Total Pastebin Dumps: " + body.count],
+                summary: ["Total Pastebin Dumps: " + pastebins.length],
                 // Data that you want to pass back to the notification window details block
-                details: body.data
+                details: pastebins
             }
         });
     });
@@ -165,15 +171,12 @@ function _lookupEntityDomain(entityObj, options, cb) {
         }
         Logger.debug({ body: body }, "Printing out the results of Body ");
 
-        Logger.debug({ body: body }, "Checking Null issues for body");
-
-        if (_.isNull(body) || _.isEmpty(body.data || body.count === 0)) {
-            cb(null, {
+        const pastebins = getPastebins(options, body);
+        if (!pastebins.length) 
+            return cb(null, {
                 entity: entityObj,
                 data: null // setting data to null indicates to the server that this entity lookup was a "miss"
             });
-            return;
-        }
 
         // The lookup results returned is an array of lookup objects with the following format
         cb(null, {
@@ -182,13 +185,22 @@ function _lookupEntityDomain(entityObj, options, cb) {
             // Required: An object containing everything you want passed to the template
             data: {
                 // Required: These are the tags that are displayed in your template
-                summary: ["Total Pastebin Dumps: " + body.count],
+                summary: ["Total Pastebin Dumps: " + pastebins.length],
                 // Data that you want to pass back to the notification window details block
-                details: body.data
+                details: pastebins
             }
         });
     });
 }
+
+const getPastebins = (options, body) => fp.flow(
+    fp.getOr([], "data"),
+    fp.filter(
+        ({ time }) =>
+            options.useDateFilter && moment.utc(new Date()).diff(moment(time), "days", false) <=
+            DAYS_TO_LOOK_BACK
+    )
+)(body);
 
 function _isLookupMiss(response) {
     return response.statusCode === 404 || response.statusCode === 500 || response.statusCode === 400;

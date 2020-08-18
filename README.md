@@ -16,6 +16,9 @@ Base URL used to access your instance of psbdmp_dot_ws including the schema.
 
 Domains and emails that match the given regex will not be searched (if blank, no domains will be ignored).
 
+### Use Date Filter
+
+Filter out results that are older than 60 days.
 
 ## Installation Instructions
 

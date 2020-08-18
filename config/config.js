@@ -4,7 +4,7 @@ module.exports = {
    * @type String
    * @required
    */
-  name: 'psbdmp',
+  name: "psbdmp",
   /**
    * The acronym that appears in the notification window when information from this integration
    * is displayed.  Note that the acronym is included as part of each "tag" in the summary information
@@ -14,12 +14,12 @@ module.exports = {
    * @type String
    * @required
    */
-  acronym: 'PSBD',
+  acronym: "PSBD",
 
-  entityTypes: ['domain', 'email'],
+  entityTypes: ["domain", "email"],
 
   logging: {
-    level: 'trace'
+    level: "info",
   },
   //trace, debug, info, warn, error, fatal
   /**
@@ -28,7 +28,7 @@ module.exports = {
    * @type String
    * @optional
    */
-  description: 'Lookup Pastebin dumps via psbdmp_dot_ws',
+  description: "Lookup Pastebin dumps via psbdmp_dot_ws",
   /**
    * Provide custom component logic and template for rendering the integration details block.  If you do not
    * provide a custom template and/or component then the integration will display data as a table of key value
@@ -39,34 +39,34 @@ module.exports = {
    */
   block: {
     component: {
-      file: './components/psbdmp-block.js'
+      file: "./components/psbdmp-block.js",
     },
     template: {
-      file: './templates/psbdmp-block.hbs'
-    }
+      file: "./templates/psbdmp-block.hbs",
+    },
   },
   request: {
     // Provide the path to your certFile. Leave an empty string to ignore this option.
     // Relative paths are relative to the integration's root directory
-    cert: '',
+    cert: "",
     // Provide the path to your private key. Leave an empty string to ignore this option.
     // Relative paths are relative to the integration's root directory
-    key: '',
+    key: "",
     // Provide the key passphrase if required.  Leave an empty string to ignore this option.
     // Relative paths are relative to the integration's root directory
-    passphrase: '',
+    passphrase: "",
     // Provide the Certificate Authority. Leave an empty string to ignore this option.
     // Relative paths are relative to the integration's root directory
-    ca: '',
+    ca: "",
     // An HTTP proxy to be used. Supports proxy Auth with Basic Auth, identical to support for
     // the url parameter (by embedding the auth info in the uri)
-    proxy: '',
+    proxy: "",
     /**
      * If set to false, the integration will ignore SSL errors.  This will allow the integration to connect
      * to servers without valid SSL certificates.  Please note that we do NOT recommending setting this
      * to false in a production environment.
      */
-    rejectUnauthorized: true
+    rejectUnauthorized: false,
   },
   onDemandOnly: true,
   /**
@@ -78,41 +78,53 @@ module.exports = {
    */
   options: [
     {
-      key: 'baseUrl',
-      name: 'psbdmp Base Url',
-      description:
-        'psbdmp url',
-      default: 'https://psbdmp.ws',
-      type: 'text',
+      key: "baseUrl",
+      name: "psbdmp Base Url",
+      description: "psbdmp url",
+      default: "https://psbdmp.ws",
+      type: "text",
       userCanEdit: true,
-      adminOnly: false
+      adminOnly: false,
     },
     {
-        "key"         : "blocklist",
-        "name"        : "Domain Ignore List",
-        "description" : "List of domains that you never want to lookup in Pastebin Dmps",
-        "default"     : "",
-        "type"        : "text",
-        "userCanEdit" : false,
-        "adminOnly"    : false
+      key: "blocklist",
+      name: "Domain Ignore List",
+      description:
+        "List of domains that you never want to lookup in Pastebin Dmps",
+      default: "",
+      type: "text",
+      userCanEdit: false,
+      adminOnly: false,
     },
     {
-        key: "domainBlocklistRegex",
-        name: "Ignore Domain Regex",
-        description: "Domains that match the given regex will not be looked up (if blank, no domains will be ignored",
-        default: "",
-        type: "text",
-        userCanEdit: false,
-        adminOnly: false
+      key: "domainBlocklistRegex",
+      name: "Ignore Domain Regex",
+      description:
+        "Domains that match the given regex will not be looked up (if blank, no domains will be ignored",
+      default: "",
+      type: "text",
+      userCanEdit: false,
+      adminOnly: false,
     },
     {
-        key: "emailBlocklistRegex",
-        name: "Ignore EmailRegex",
-        description: "Emails that match the given regex will not be looked up (if blank, no Emails will be ignored)",
-        default: "",
-        type: "text",
-        userCanEdit: false,
-        adminOnly: false
+      key: "emailBlocklistRegex",
+      name: "Ignore EmailRegex",
+      description:
+        "Emails that match the given regex will not be looked up (if blank, no Emails will be ignored)",
+      default: "",
+      type: "text",
+      userCanEdit: false,
+      adminOnly: false,
     },
-  ]
+    {
+      key: "useDateFilter",
+      name: "Use Date Filter",
+      description:
+        "Filter out results that are older than 60 days.",
+      default: true,
+      type: "boolean",
+      userCanEdit: false,
+      adminOnly: false,
+    },
+  ],
 };
