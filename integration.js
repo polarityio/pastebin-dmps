@@ -197,8 +197,9 @@ const getPastebins = (options, body) => fp.flow(
     fp.getOr([], "data"),
     fp.filter(
         ({ time }) =>
-            options.useDateFilter && moment.utc(new Date()).diff(moment(time), "days", false) <=
-            DAYS_TO_LOOK_BACK
+            !options.useDateFilter || 
+            moment.utc(new Date()).diff(moment(time), "days", false) <=
+                DAYS_TO_LOOK_BACK
     )
 )(body);
 
