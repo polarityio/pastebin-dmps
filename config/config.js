@@ -120,7 +120,7 @@ module.exports = {
       key: "useDateFilter",
       name: "Use Date Filter",
       description:
-        "Filter out results that are older than 60 days.",
+        "Filter out results that are older than 60 days (Will reduce the number of results coming back from pastebin)",
       default: true,
       type: "boolean",
       userCanEdit: false,

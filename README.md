@@ -18,7 +18,7 @@ Domains and emails that match the given regex will not be searched (if blank, no
 
 ### Use Date Filter
 
-Filter out results that are older than 60 days.
+Filter out results that are older than 60 days. (Will reduce the number of results coming back from pastebin)
 
 ## Installation Instructions
 
