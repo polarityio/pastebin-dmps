@@ -20,16 +20,16 @@ dependency-reduced-pom.xml
 *.xlsx
 
 # Ignore local log files
-logs/
 *.log
+logs/
+*.remote-sync.json
 
 # Ignore Generated HTML README Files
 README.html
 
-#Ignore local files
-.DS_Store
-.remote-sync.json
-.prettierrc
-
 # Ignored installed NPM modules
 node_modules/
+
+#Ignore VSCode files
+*.history
+*.VSCode

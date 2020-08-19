@@ -12,9 +12,13 @@ To learn more about Psbdmp, please visit the [official website](https://psbdmp.w
 
 Base URL used to access your instance of psbdmp_dot_ws including the schema.
 
-### Domain Black List Regex
+### Ignore Indicator Regexes 
 
-Domains (including in email addresses) that match the given regex will not be searched (if blank, no domains will be black listed)
+Domains and emails that match the given regex will not be searched (if blank, no domains will be ignored).
+
+### Use Date Filter
+
+Filter out results that are older than 60 days. (Will reduce the number of results coming back from pastebin)
 
 ## Installation Instructions
 
