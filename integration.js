@@ -99,7 +99,7 @@ function doLookup(entities, options, cb) {
 function _lookupEntity(entityObj, options, cb) {
 
     let requestOptions = {
-        uri: options.baseUrl + '/api/search/eamil/' + entityObj.value,
+        uri: options.baseUrl + '/api/search/email/' + entityObj.value,
         method: 'GET',
         json: true
     };
@@ -121,7 +121,7 @@ function _lookupEntity(entityObj, options, cb) {
         Logger.debug({ body: body }, "Printing out the results of Body ");
 
         Logger.debug({ body: body }, "Checking Null issues for body");
-        
+
         // TODO write and implement function here to filter out data from body.data that isn't within date
         const pastebins = getPastebins(options, body);
 
@@ -130,7 +130,7 @@ function _lookupEntity(entityObj, options, cb) {
                 entity: entityObj,
                 data: null // setting data to null indicates to the server that this entity lookup was a "miss"
             });
-        
+
 
         // The lookup results returned is an array of lookup objects with the following format
         cb(null, {
@@ -172,7 +172,7 @@ function _lookupEntityDomain(entityObj, options, cb) {
         Logger.debug({ body: body }, "Printing out the results of Body ");
 
         const pastebins = getPastebins(options, body);
-        if (!pastebins.length) 
+        if (!pastebins.length)
             return cb(null, {
                 entity: entityObj,
                 data: null // setting data to null indicates to the server that this entity lookup was a "miss"
@@ -197,7 +197,7 @@ const getPastebins = (options, body) => fp.flow(
     fp.getOr([], "data"),
     fp.filter(
         ({ time }) =>
-            !options.useDateFilter || 
+            !options.useDateFilter ||
             moment.utc(new Date()).diff(moment(time), "days", false) <=
                 DAYS_TO_LOOK_BACK
     )
