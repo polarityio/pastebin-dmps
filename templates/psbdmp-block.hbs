@@ -1,7 +1,18 @@
-{{#each details as |result index|}}
+{{#if (not-eq details.pastebins.length details.totalPasteBins)}}
+  <div class="mb-2">
+    Showing {{details.pastebins.length}} of {{details.totalPasteBins}} pastebins
+  </div>
+{{/if}}
+{{#each details.pastebins as |result index|}}
+  {{#if (gt index 0)}}
+    <hr>
+  {{/if}}
+    <div>
+      <a href="https://pastebin.com/{{result.id}}" target="_blank">View dump on pastebin.com <span style="font-size:8px">{{fa-icon icon="external-link"}}</span></a>
+    </div>
     <div>
       <span class="p-key">Pastebin ID:</span>
-      <span class="p-value"><a href="https://pastebin.com/{{result.id}}" target="_blank">{{result.id}}</a></span>
+      <span class="p-value">{{result.id}}</span>
     </div>
     <div>
       <span class="p-key">Creation Time:</span>
@@ -11,5 +22,9 @@
       <span class="p-key">Tag:</span>
       <span class="p-value">{{result.tags}}</span>
     </div>
-    <hr>
 {{/each}}
+<div class="mt-2 p-footnote">
+  {{#if (gt details.additionalPasteBins 0)}}
+    {{details.additionalPasteBins}} additional paste bins not shown
+  {{/if}}
+</div>
