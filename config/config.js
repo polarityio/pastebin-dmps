@@ -28,6 +28,7 @@ module.exports = {
    * @optional
    */
   description: 'Lookup Pastebin dumps via psbdmp_dot_ws',
+  defaultColor: "light-gray",
   /**
    * Provide custom component logic and template for rendering the integration details block.  If you do not
    * provide a custom template and/or component then the integration will display data as a table of key value
